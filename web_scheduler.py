@@ -6,18 +6,6 @@ import io
 import os
 import logging
 
-# Initialize session state
-if 'authenticated' not in st.session_state:
-    st.session_state.authenticated = False
-
-# Simple password protection
-if not st.session_state.authenticated:
-    password = st.text_input("Enter password:", type="password")
-    if password == os.getenv("APP_PASSWORD", "default_password"):
-        st.session_state.authenticated = True
-    else:
-        st.stop()
-
 # Replace the hardcoded page config with environment variables for flexibility
 st.set_page_config(
     page_title=os.getenv("PAGE_TITLE", "Interview Scheduler"),
