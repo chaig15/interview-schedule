@@ -14,7 +14,6 @@ st.set_page_config(
 )
 
 st.title("Interview Scheduler")
-st.write("Upload your student availability CSV file to generate the interview schedule.")
 
 # Remove the constants and add UI elements
 st.write("Upload your student availability CSV file to generate the interview schedule.")
