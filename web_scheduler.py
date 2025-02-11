@@ -37,13 +37,13 @@ def process_uploaded_file(uploaded_file):
     availability = defaultdict(dict)
     dates = []
     
-    # Convert uploaded file to text lines for csv reader
-    text_data = io.TextIOWrapper(uploaded_file)
+    # Convert uploaded file to text lines for csv reader with proper encoding
+    text_data = io.TextIOWrapper(uploaded_file, encoding='utf-8-sig')
     reader = csv.DictReader(text_data)
     dates = [date for date in reader.fieldnames[2:]]
     
     for row in reader:
-        full_name = f"{row['First Name']}-{row['Last Name']}"
+        full_name = f"{row['Last Name']}-{row['First Name']}"
         students.append(full_name)
         for date in dates:
             availability[full_name][date] = (row[date] != 'x')

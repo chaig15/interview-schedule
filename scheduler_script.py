@@ -3,7 +3,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 
 # File names configuration
-INPUT_FILE = 'student_availability.csv'
+INPUT_FILE = 'test_availability.csv'
 OUTPUT_FILE = 'interview_schedule.csv'
 
 # Interview configuration
@@ -16,14 +16,14 @@ availability = defaultdict(dict)
 dates = []
 
 # Read the CSV file
-with open(INPUT_FILE, 'r') as file:
+with open(INPUT_FILE, 'r', encoding='utf-8-sig') as file:
     reader = csv.DictReader(file)
     # Get dates from headers, excluding First Name and Last Name columns
     dates = [date for date in reader.fieldnames[2:]]
     for row in reader:
-        full_name = f"{row['First Name']}-{row['Last Name']}"
+        full_name = f"{row['Last Name']}-{row['First Name']}"
         students.append(full_name)
-        for date in dates:  # Use the dates we got from headers
+        for date in dates:
             availability[full_name][date] = (row[date] != 'x')
             
 
