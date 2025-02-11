@@ -58,9 +58,17 @@ def get_available_students(date, role, excluded_students):
          (role == "primary" and last_primary_week[s] < week_number - 1))
     ]
     if role == "primary":
-        return sorted(available, key=lambda s: (student_count[s]["primary"], student_count[s]["secondary"]))
+        return sorted(available, key=lambda s: (
+            student_count[s]["primary"], 
+            student_count[s]["secondary"],
+            s  # Use student name as tiebreaker
+        ))
     else:  # For secondary, prioritize those with lower secondary counts
-        return sorted(available, key=lambda s: (student_count[s]["secondary"], student_count[s]["primary"]))
+        return sorted(available, key=lambda s: (
+            student_count[s]["secondary"], 
+            student_count[s]["primary"],
+            s  # Use student name as tiebreaker
+        ))
 
 # Schedule students
 for date in dates:
