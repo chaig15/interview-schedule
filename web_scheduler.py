@@ -154,7 +154,25 @@ def test_schedule_validity(schedule, availability, weeks, students):
 
     return errors
 
-# File uploader
+# Replace the expander section with direct instructions
+st.subheader("CSV Format Instructions")
+st.write("""
+Your CSV file should have the following format:
+- First row: `Last Name,First Name,` followed by dates (e.g., 9/9, 9/10, etc.)
+- For each student row:
+    - Last name in first column
+    - First name in second column
+    - For each date: leave blank if available, put 'x' if not available
+
+Example:
+```
+Last Name,First Name,9/9,9/10,9/16
+Smith,John,x,,
+Doe,Jane,,x,
+```
+""")
+
+# File uploader (moved above the instructions)
 uploaded_file = st.file_uploader("Choose your student_availability.csv file", type="csv")
 
 if uploaded_file:
@@ -199,21 +217,3 @@ if uploaded_file:
         logger.error(f"Error processing file: {str(e)}")
         st.error(f"An error occurred: {str(e)}")
         st.write("Please make sure your CSV file is properly formatted with 'First Name', 'Last Name', and date columns.")
-
-# Add instructions at the bottom
-with st.expander("CSV Format Instructions"):
-    st.write("""
-    Your CSV file should have the following format:
-    - First row: `Last Name,First Name,` followed by dates (e.g., 9/9, 9/10, etc.)
-    - For each student row:
-        - Last name in first column
-        - First name in second column
-        - For each date: leave blank if available, put 'x' if not available
-    
-    Example:
-    ```
-    Last Name,First Name,9/9,9/10,9/16
-    Smith,John,x,,
-    Doe,Jane,,x,
-    ```
-    """)
