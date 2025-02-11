@@ -173,7 +173,7 @@ Doe,Jane,,x,
 """)
 
 # File uploader (moved above the instructions)
-uploaded_file = st.file_uploader("Choose your student_availability.csv file", type="csv")
+uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
 
 if uploaded_file:
     try:
