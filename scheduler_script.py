@@ -21,6 +21,10 @@ with open(INPUT_FILE, 'r', encoding='utf-8-sig') as file:
     # Get dates from headers, excluding First Name and Last Name columns
     dates = [date for date in reader.fieldnames[2:]]
     for row in reader:
+        # Skip rows where both First Name and Last Name are empty
+        if not row['First Name'].strip() and not row['Last Name'].strip():
+            continue
+            
         full_name = f"{row['Last Name']}-{row['First Name']}"
         students.append(full_name)
         for date in dates:
