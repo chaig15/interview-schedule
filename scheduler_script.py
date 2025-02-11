@@ -6,11 +6,16 @@ from datetime import datetime, timedelta
 INPUT_FILE = 'student_availability.csv'
 OUTPUT_FILE = 'interview_schedule.csv'
 
+# Interview configuration
+REQUIRED_PRIMARY = 12
+REQUIRED_SECONDARY = 10
+
 # Read the CSV file
 students = []
 availability = defaultdict(dict)
 dates = []
 
+# Read the CSV file
 with open(INPUT_FILE, 'r') as file:
     reader = csv.DictReader(file)
     # Get dates from headers, excluding First Name and Last Name columns
@@ -20,6 +25,7 @@ with open(INPUT_FILE, 'r') as file:
         students.append(full_name)
         for date in dates:  # Use the dates we got from headers
             availability[full_name][date] = (row[date] != 'x')
+            
 
 # Initialize schedule and counters using dates from CSV
 schedule = {date: {"primary": [], "secondary": []} for date in dates}
@@ -28,12 +34,13 @@ weekly_primary = defaultdict(set)
 last_primary_week = {student: -2 for student in students}
 
 # Define weeks
-start_date = datetime.strptime(dates[0], "%m/%d").replace(year=2023)
+current_year = datetime.now().year
+start_date = datetime.strptime(dates[0], "%m/%d").replace(year=current_year)
 weeks = {}
 for i, date in enumerate(dates):
-    current_date = datetime.strptime(date, "%m/%d").replace(year=2023)
+    current_date = datetime.strptime(date, "%m/%d").replace(year=current_year)
     if current_date.month < start_date.month:
-        current_date = current_date.replace(year=2024)
+        current_date = current_date.replace(year=current_year + 1)
     week_number = (current_date - start_date).days // 7
     weeks[date] = week_number
 
@@ -55,20 +62,20 @@ for date in dates:
     week_number = weeks[date]
     available_primary = get_available_students(date, "primary", [])
     
-    primary = available_primary[:10]
+    primary = available_primary[:REQUIRED_PRIMARY]
     for student in primary:
         schedule[date]["primary"].append(student)
         student_count[student]["primary"] += 1
         last_primary_week[student] = week_number
     
     available_secondary = get_available_students(date, "secondary", primary)
-    secondary = available_secondary[:10]
+    secondary = available_secondary[:REQUIRED_SECONDARY]
     for student in secondary:
         schedule[date]["secondary"].append(student)
         student_count[student]["secondary"] += 1
 
     # If we don't have enough secondary students, try to find more
-    while len(secondary) < 10 and len(available_secondary) > len(secondary):
+    while len(secondary) < REQUIRED_SECONDARY and len(available_secondary) > len(secondary):
         next_student = available_secondary[len(secondary)]
         secondary.append(next_student)
         schedule[date]["secondary"].append(next_student)
@@ -89,7 +96,7 @@ else:
 # Check for dates with insufficient interviewers
 print("\nDates with insufficient interviewers:")
 for date in dates:
-    if len(schedule[date]["primary"]) < 10 or len(schedule[date]["secondary"]) < 10:
+    if len(schedule[date]["primary"]) < REQUIRED_PRIMARY or len(schedule[date]["secondary"]) < REQUIRED_SECONDARY:
         print(f"{date}: Primary - {len(schedule[date]['primary'])}, Secondary - {len(schedule[date]['secondary'])}")
 
 # Write results to CSV
