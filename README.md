@@ -37,7 +37,7 @@
 
 4. **Put both files on your Desktop:**
 
-   - scheduler.py
+   - scheduler_script.py
    - student_availability.csv
 
 5. **Open Terminal:**
@@ -49,6 +49,6 @@
    Type in Terminal: `cd Desktop`
 
 7. **Run:**
-   Type in Terminal: `python3 scheduler.py`
+   Type in Terminal: `python3 scheduler_script.py`
 
 The output will be saved as `interview_schedule.csv` on your Desktop.
