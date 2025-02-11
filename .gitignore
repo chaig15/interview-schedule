@@ -1,3 +1,9 @@
+# Generated CSV files
+interview_schedule.csv
+student_schedule.csv
+test_availability.csv
+input.csv
+
 # Reference files (uncomment if you don't want them in version control)
 # reference/
 
