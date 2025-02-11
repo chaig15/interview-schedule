@@ -27,6 +27,7 @@ with open(INPUT_FILE, 'r', encoding='utf-8-sig') as file:
             
         full_name = f"{row['Last Name']}-{row['First Name']}"
         students.append(full_name)
+        print(f"Total number of students: {len(students)}")
         for date in dates:
             availability[full_name][date] = (row[date] != 'x')
             
@@ -103,7 +104,7 @@ for date in dates:
     if len(schedule[date]["primary"]) < REQUIRED_PRIMARY or len(schedule[date]["secondary"]) < REQUIRED_SECONDARY:
         print(f"{date}: Primary - {len(schedule[date]['primary'])}, Secondary - {len(schedule[date]['secondary'])}")
 
-# Write results to CSV
+# Write results to CSV (original format)
 with open(OUTPUT_FILE, 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     
@@ -121,10 +122,29 @@ with open(OUTPUT_FILE, 'w', newline='') as csvfile:
     writer.writerow(['Student', 'Primary Count', 'Secondary Count'])
     for student in students:
         writer.writerow([student, student_count[student]['primary'], student_count[student]['secondary']])
+
+# Write student-organized format
+with open('student_schedule.csv', 'w', newline='') as csvfile:
+    writer = csv.writer(csvfile)
     
-    # Write not scheduled students
-    if not_scheduled:
-        writer.write
+    # Write header
+    writer.writerow(['Student', 'Primary Dates', 'Secondary Dates'])
+    
+    # For each student, collect their primary and secondary dates
+    for student in sorted(students):
+        primary_dates = []
+        secondary_dates = []
+        for date in dates:
+            if student in schedule[date]['primary']:
+                primary_dates.append(date)
+            if student in schedule[date]['secondary']:
+                secondary_dates.append(date)
+        
+        writer.writerow([
+            student,
+            ', '.join(primary_dates),
+            ', '.join(secondary_dates)
+        ])
 
 def test_schedule_validity(schedule, availability, weeks):
     print("\nTesting schedule validity...")
@@ -169,3 +189,6 @@ def test_schedule_validity(schedule, availability, weeks):
 # Call the test function after scheduling
 is_valid = test_schedule_validity(schedule, availability, weeks)
 print(f"Schedule is {'valid' if is_valid else 'invalid'}")
+
+# Add total student count at the very end
+print(f"\nTotal number of students: {len(students)}")

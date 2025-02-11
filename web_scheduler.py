@@ -184,7 +184,6 @@ if uploaded_file:
         with st.spinner('Processing schedule...'):
             # Process the uploaded file
             students, availability, dates = process_uploaded_file(uploaded_file)
-            # Pass the new variables to create_schedule
             schedule, student_count, weeks = create_schedule(students, availability, dates, required_primary, required_secondary)
             
             # Validate the schedule
@@ -196,16 +195,46 @@ if uploaded_file:
             else:
                 st.success("Schedule generated and validated successfully!")
             
-            # Create the output CSV
+            # Create both CSV outputs
+            # Original format (by date)
             output_csv = create_output_csv(schedule, student_count, dates)
             
-            # Show success message and download button
-            st.download_button(
-                label="Download Interview Schedule",
-                data=output_csv,
-                file_name="interview_schedule.csv",
-                mime="text/csv"
-            )
+            # New format (by student)
+            student_output = io.StringIO()
+            writer = csv.writer(student_output)
+            writer.writerow(['Student', 'Primary Dates', 'Secondary Dates'])
+            
+            for student in sorted(students):
+                primary_dates = []
+                secondary_dates = []
+                for date in dates:
+                    if student in schedule[date]['primary']:
+                        primary_dates.append(date)
+                    if student in schedule[date]['secondary']:
+                        secondary_dates.append(date)
+                
+                writer.writerow([
+                    student,
+                    ', '.join(primary_dates),
+                    ', '.join(secondary_dates)
+                ])
+            
+            # Show download buttons for both formats
+            col1, col2 = st.columns(2)
+            with col1:
+                st.download_button(
+                    label="Download Schedule by Date",
+                    data=output_csv,
+                    file_name="interview_schedule.csv",
+                    mime="text/csv"
+                )
+            with col2:
+                st.download_button(
+                    label="Download Schedule by Student",
+                    data=student_output.getvalue(),
+                    file_name="student_schedule.csv",
+                    mime="text/csv"
+                )
             
             # Display some statistics
             st.subheader("Quick Statistics")
